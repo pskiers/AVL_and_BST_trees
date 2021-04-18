@@ -66,13 +66,6 @@ class AVL(BST):
         if inserted is not None:
             inserted.change_balance(self)
 
-    def remove(self, value):
-        result = self.search(value)
-        if result is not None:
-            deleted, left_son = result.remove(self)
-            if deleted is not None:
-                deleted.change_balance_remove(self, left_son)
-
 
 class Node:
     def __init__(self, value, parent=None, left=None, right=None, balance=0) -> None:
@@ -172,19 +165,6 @@ class Node:
             self.parent.balance += 1
         if self.parent.balance != 0:
             self.parent.change_balance(tree)
-
-    def change_balance_remove(self, tree, left_son):
-        if self.balance > 1 or self.balance < -1:
-            self.fix_tree(tree)
-            self.parent.change_balance_remove(tree, left_son)
-        if self.parent is None:
-            return None
-        if left_son:
-            self.parent.balance += 1
-        else:
-            self.parent.balance -= 1
-        if self.parent.balance != 0:
-            self.parent.change_balance_remove(tree, left_son)
 
     def insert(self, value):
         if value > self.value:
@@ -288,6 +268,31 @@ class Node:
             return self.left.get_max_depth()
         return max(self.left.get_max_depth(), self.right.get_max_depth())
 
+    def update_balance(self):
+        if self.right is not None and self.left is not None:
+            self.right.update_balance()
+            self.left.update_balance()
+            self.balance = self.right.get_depth() - self.left.get_depth()
+        elif self.right is None and self.left is not None:
+            self.left.update_balance()
+            self.balance = self.left.get_depth() + 1
+
+        elif self.left is None and self.right is not None:
+            self.right.update_balance()
+            self.balance = self.right.get_depth() + 1
+        else:
+            self.balance = 0
+
+    def get_depth(self):
+        if self.right is None and self.left is None:
+            return 0
+        elif self.right is not None and self.left is None:
+            return self.right.get_depth() + 1
+        elif self.left is not None and self.right is None:
+            return self.left.get_depth() + 1
+        else:
+            return max(self.right.get_depth(), self.left.get_depth()) + 1
+
     def get_max_word_len(self, max_len):
         if self.left is None and self.right is None:
             return max(len(str(self.value)), max_len)
@@ -306,18 +311,3 @@ class Node:
             self.right.add_node_to_list(values, 2*x+1, y+1)
         elif self.right is None and self.left is not None:
             self.left.add_node_to_list(values, 2*x, y+1)
-
-
-tree = AVL([5, 3, 4, 7, 9, 1, 8, 6])
-while True:
-    inputed = input("Opcja: ")
-    if inputed in {'1'}:
-        tree.insert(int(input("Jaką wartość dodać do drzewa: ")))
-    elif inputed in {'2'}:
-        tree.remove(int(input("Jaką wartość usunac z drzewa: ")))
-    elif inputed in {'3'}:
-        print(tree.max().value)
-    elif inputed in {'4'}:
-        print(tree.min().value)
-    elif inputed in {'5'}:
-        tree.print()
