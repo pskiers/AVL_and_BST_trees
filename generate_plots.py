@@ -51,7 +51,6 @@ if __name__ == "__main__":
         avl_search_times.append(timeit(f'search_items(tree, {list_of_numbers}, {arg})', setup=f"from main import AVL; from generate_plots import search_items; tree=AVL({list_of_numbers[:arg]})", number=1))
 
         bst_remove_times.append(timeit(f'remove_items(tree, {list_of_numbers}, {arg})', setup=f"from main import BST; from generate_plots import remove_items; tree=BST({list_of_numbers[:arg]})", number=1))
-        # Niestety nie działa :(
         # avl_remove_times.append(timeit(f'remove_items(tree, {list_of_numbers}, {arg})', setup=f"from main import AVL; from generate_plots import remove_items; tree=AVL({list_of_numbers[:arg]})", number=1))
     print(bst_insert_times)
     print(avl_insert_times)
